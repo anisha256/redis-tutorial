@@ -12,6 +12,7 @@ namespace MyWebAPI
                 var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
                 return ConnectionMultiplexer.Connect(redisConfiguration);
             });
+
             services.AddScoped<IRedisCacheService,RedisCacheService>();
 
             return services;

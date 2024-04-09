@@ -4,5 +4,6 @@
     {
         Task<string> GetCachedDataAsync(string key);
         Task SetCachedDataAsync(string key, string value, TimeSpan expiry);
+        Task RemoveAsync(string key);
     }
 }

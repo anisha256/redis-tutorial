@@ -2,23 +2,24 @@
 
 namespace MyWebAPI.Services
 {
-    public class RedisCacheService: IRedisCacheService
+    public class RedisCacheService : IRedisCacheService
     {
         private readonly IConnectionMultiplexer _redis;
-
-       public RedisCacheService(IConnectionMultiplexer redis)
+      
+        public RedisCacheService(IConnectionMultiplexer redis)
         {
             _redis = redis;
-
         }
         public async Task<string> GetCachedDataAsync(string key)
         {
             try
             {
-                var db = _redis.GetDatabase();
-                var cachedData = await db.StringGetAsync(key);
+                var cachedData = await _redis.GetDatabase().StringGetAsync(key);
                 return cachedData;
-            }catch (Exception ex)
+
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Unable to get cached data", ex);
             }
@@ -26,8 +27,14 @@ namespace MyWebAPI.Services
 
         public async Task SetCachedDataAsync(string key, string value, TimeSpan expiry)
         {
-            var db = _redis.GetDatabase();
-            await db.StringSetAsync(key, value, expiry);
+            await _redis.GetDatabase().StringSetAsync(key, value, expiry);
         }
+
+
+        public async Task RemoveAsync(string key)
+        {
+            await _redis.GetDatabase().KeyDeleteAsync(key);
+        }
+
     }
 }

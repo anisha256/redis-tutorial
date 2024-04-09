@@ -14,13 +14,16 @@ namespace WebAPI_Pattern_Implementation.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly IRedisCacheService _redisCacheService;
-        public UserController(HttpClient httpClient, IRedisCacheService redisCacheService)
+        private readonly IConfiguration _configuration;
+        public UserController(HttpClient httpClient, IRedisCacheService redisCacheService, IConfiguration configuration)
         {
             _redisCacheService = redisCacheService;
             _httpClient = httpClient;
+            _configuration = configuration;
         }
+
         [HttpGet(Name = "GetUsers")]
-        public async Task<ActionResult<Users[]>> Get()
+        public async Task<ActionResult<Users[]>> Get( CancellationToken ca)
         {
             try
             {
@@ -34,7 +37,8 @@ namespace WebAPI_Pattern_Implementation.Controllers
                 else
                 {
 
-                    var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
+                    var response = await _httpClient.GetAsync(
+                        _configuration["api"] + "/users");
                     response.EnsureSuccessStatusCode();
                     var users = await response.Content.ReadFromJsonAsync<Users[]>();
 
